@@ -1,0 +1,10 @@
+services:
+  postgresql:
+    image: postgres:latest
+    environment:
+      - 'POSTGRES_DB=springlab'
+      - 'POSTGRES_USER=user'
+      - 'POSTGRES_PASSWORD=pw'
+    ports:
+      - '5432:5432'
+
