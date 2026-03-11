@@ -29,11 +29,11 @@ public class MeetingService {
        return meetingRepository.findByDate(date);
     }
 
-    public List<Meeting> getMeetingsByRoomId(Long roomId) {
-        return meetingRepository.findByRoomId(roomId);
+    public List<Meeting> getMeetingsByRoomId(Long id) {
+        return meetingRepository.findByRoomId(id);
     }
 
-    public List<Meeting> getMeetingsByDateAndRoomId(LocalDate date, Long roomId) {
-        return meetingRepository.findByDateAndRoomId(date, roomId);
+    public List<Meeting> getMeetingsByDateAndRoomId(LocalDate date, Long id) {
+        return meetingRepository.findByDateAndRoomId(date, id);
     }
 }
