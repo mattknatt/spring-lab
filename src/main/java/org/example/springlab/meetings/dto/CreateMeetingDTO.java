@@ -1,4 +1,4 @@
-package org.example.springlab.meetings;
+package org.example.springlab.meetings.dto;
 
 import jakarta.validation.constraints.*;
 

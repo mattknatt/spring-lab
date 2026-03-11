@@ -1,5 +1,9 @@
 package org.example.springlab.meetings;
 
+import org.example.springlab.meetings.dto.CreateMeetingDTO;
+import org.example.springlab.meetings.dto.MeetingDTO;
+import org.example.springlab.meetings.dto.UpdateMeetingDTO;
+
 public class MeetingMapper {
 
     public static MeetingDTO toDTO(Meeting meeting) {
