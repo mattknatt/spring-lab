@@ -18,6 +18,8 @@ public class MeetingController {
     public String viewMeetings(Model model) {
         List<Meeting> meetings = meetingService.getAllMeetings();
         model.addAttribute("meetings", meetings);
+        model.addAttribute("title", "Meetings");
+        model.addAttribute("message", "All meetings");
         return "meetings";
     }
 
