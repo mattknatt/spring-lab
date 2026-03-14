@@ -7,7 +7,7 @@ import java.time.LocalDate;
 public record CreateMeetingDTO(
         @NotBlank String name,
 
-        @Size(min = 3, max = 100) @NotBlank String description,
+        @Size(min = 3, max = 255) @NotBlank String description,
 
         @FutureOrPresent LocalDate date,
 
