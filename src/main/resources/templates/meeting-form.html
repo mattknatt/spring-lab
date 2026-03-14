@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}">Meeting Form</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 32px;
+            font-size: 14px;
+            color: #222;
+        }
+
+        h1 { font-size: 20px; font-weight: 600; margin-bottom: 24px; }
+
+        form { max-width: 400px; }
+
+        .field { margin-bottom: 16px; }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 4px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            font-family: sans-serif;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #999;
+        }
+
+        .error {
+            font-size: 12px;
+            color: #c0392b;
+            margin-top: 4px;
+        }
+
+        .form-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        button[type="submit"] {
+            background: #222;
+            color: #fff;
+            border: none;
+            padding: 9px 18px;
+            font-size: 13px;
+            font-family: sans-serif;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover { background: #444; }
+
+        a { color: #888; font-size: 13px; }
+    </style>
+</head>
+<body>
+
+<h1 th:text="${title}">Meeting</h1>
+
+<form th:action="@{${formAction}}" th:object="${meeting}" method="post">
+
+    <input type="hidden" th:field="*{id}" th:if="${formAction == '/meetings/update'}" />
+
+    <div class="field">
+        <label>Name</label>
+        <input type="text" th:field="*{name}" />
+        <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error"></div>
+    </div>
+
+    <div class="field">
+        <label>Description</label>
+        <input type="text" th:field="*{description}" />
+        <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="error"></div>
+    </div>
+
+    <div class="field">
+        <label>Date</label>
+        <input type="date" th:field="*{date}" />
+        <div th:if="${#fields.hasErrors('date')}" th:errors="*{date}" class="error"></div>
+    </div>
+
+    <div class="field">
+        <label>Room ID</label>
+        <input type="number" th:field="*{roomId}" />
+        <div th:if="${#fields.hasErrors('roomId')}" th:errors="*{roomId}" class="error"></div>
+    </div>
+
+    <div class="field">
+        <label>Max Participants</label>
+        <input type="number" th:field="*{maxParticipants}" />
+        <div th:if="${#fields.hasErrors('maxParticipants')}" th:errors="*{maxParticipants}" class="error"></div>
+    </div>
+
+    <div class="form-actions">
+        <button type="submit"
+                th:text="${formAction == '/meetings'} ? 'Create meeting' : 'Save changes'">Save</button>
+        <a th:href="@{/meetings}">Cancel</a>
+    </div>
+
+</form>
+
+</body>
+</html>

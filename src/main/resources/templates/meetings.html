@@ -1,41 +1,101 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title th:text="${title}">Meetings</title>
-  <style>
-    table { border-collapse: collapse; width: 100%; }
-    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-    th { background-color: #f2f2f2; }
-  </style>
+    <meta charset="UTF-8">
+    <title th:text="${title}">Meetings</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 32px;
+            font-size: 14px;
+            color: #222;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        h1 { font-size: 20px; font-weight: 600; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 10px 12px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        th {
+            font-size: 12px;
+            color: #888;
+            font-weight: 600;
+        }
+
+        .actions { display: flex; gap: 8px; }
+
+        a { color: #222; font-size: 13px; }
+
+        button {
+            font-size: 13px;
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            padding: 0;
+            font-family: sans-serif;
+        }
+
+        button:hover { color: #c0392b; }
+
+        .empty { color: #aaa; margin-top: 16px; }
+    </style>
 </head>
 <body>
-<h1 th:text="${message}">Meetings</h1>
+
+<div class="header">
+    <h1 th:text="${message}">Meetings</h1>
+    <a th:href="@{/meetings/new}">+ New meeting</a>
+</div>
 
 <table th:if="${not #lists.isEmpty(meetings)}">
-  <thead>
-  <tr>
-    <th>Name</th>
-    <th>Description</th>
-    <th>Date</th>
-    <th>Room-ID</th>
-    <th>Maximum participants</th>
-  </tr>
-  </thead>
-  <tbody>
-  <!-- 'meetings' är namnet på listan du skickar med i din Controller -->
-  <tr th:each="meeting : ${meetings}">
-    <td th:text="${meeting.name}">Name</td>
-    <td th:text="${meeting.description}">Description</td>
-    <td th:text="${meeting.date}">Date</td>
-    <td th:text="${meeting.roomId}">Room-ID</td>
-    <td th:text="${meeting.maxParticipants}">Maximum participants</td>
-  </tr>
-  </tbody>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Date</th>
+        <th>Room</th>
+        <th>Max</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="meeting : ${meetings}">
+        <td th:text="${meeting.name}"></td>
+        <td th:text="${meeting.description}"></td>
+        <td th:text="${#temporals.format(meeting.date, 'dd MMM yyyy')}"></td>
+        <td th:text="${meeting.roomId}"></td>
+        <td th:text="${meeting.maxParticipants}"></td>
+        <td>
+            <div class="actions">
+                <a th:href="@{/meetings/update/{id}(id=${meeting.id})}">Edit</a>
+                <form th:action="@{/meetings/delete/{id}(id=${meeting.id})}" method="post">
+                    <button type="submit" onclick="return confirm('Delete this meeting?')">
+                        Delete
+                    </button>
+                </form>
+            </div>
+        </td>
+    </tr>
+    </tbody>
 </table>
 
-<!-- Om listan är tom -->
-<p th:if="${#lists.isEmpty(meetings)}">No meetings booked</p>
+<p class="empty" th:if="${#lists.isEmpty(meetings)}">No meetings scheduled.</p>
 
 </body>
 </html>

@@ -36,4 +36,7 @@ public class MeetingService {
     public List<Meeting> getMeetingsByDateAndRoomId(LocalDate date, Long roomId) {
         return meetingRepository.findByDateAndRoomId(date, roomId);
     }
+    public Meeting getMeetingById(Long id) {
+        return meetingRepository.findById(id).orElse(null);
+    }
 }
