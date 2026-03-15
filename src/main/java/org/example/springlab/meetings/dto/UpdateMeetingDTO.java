@@ -6,10 +6,10 @@ import java.time.LocalDate;
 
 public record UpdateMeetingDTO(
         @NotNull @Positive Long id,
-        String name,
+        @NotBlank String name,
         @NotBlank @Size(min = 3, max = 255) String description,
-        @FutureOrPresent LocalDate date,
-        Long roomId,
-        @Positive Integer maxParticipants
-        ) {
+        @NotNull @FutureOrPresent LocalDate date,
+        @NotNull Long roomId,
+        @Positive @Max(100) Integer maxParticipants
+) {
 }
