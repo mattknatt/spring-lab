@@ -36,7 +36,10 @@ public class MeetingController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo,
             @RequestParam(required = false)    Long room
     ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("date").ascending());
+        int safePage = Math.max(0, page);
+        int safeSize = (size <= 0) ? 10 : Math.min(size, 100);
+
+        Pageable pageable = PageRequest.of(safePage, safeSize, Sort.by("date").ascending());
         Page<Meeting> meetingPage = meetingService.getMeetings(pageable, name, dateFrom, dateTo, room);
 
         boolean isFiltered = (name != null && !name.isBlank())
@@ -48,7 +51,7 @@ public class MeetingController {
         model.addAttribute("currentPage",     meetingPage.getNumber());
         model.addAttribute("totalPages",      meetingPage.getTotalPages());
         model.addAttribute("totalElements",   meetingPage.getTotalElements());
-        model.addAttribute("size",            size);
+        model.addAttribute("size",            safeSize);
         model.addAttribute("isFiltered",      isFiltered);
 
         // Echo filter values back so inputs stay populated after submit

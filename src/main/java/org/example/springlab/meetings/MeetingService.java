@@ -35,11 +35,13 @@ public class MeetingService {
                                      LocalDate dateTo,
                                      Long room) {
         // Normalise blank strings to null so JPQL :param IS NULL checks work
-        String normName = (name != null && name.isBlank()) ? null : name;
+        String normName = (name == null) ? null : name.trim();
+        if(normName != null && normName.isBlank())
+            normName = null;
         return meetingRepository.findAllFiltered(normName, dateFrom, dateTo, room, pageable);
     }
 
-    public List<String> getAllRoomIds() {
+    public List<Long> getAllRoomIds() {
         return meetingRepository.findAllDistinctRoomIds();
     }
 }
