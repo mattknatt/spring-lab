@@ -74,32 +74,32 @@
     <input type="hidden" th:field="*{id}" th:if="${formAction == '/meetings/update'}" />
 
     <div class="field">
-        <label>Name</label>
-        <input type="text" th:field="*{name}" />
+        <label for="name">Name</label>
+        <input type="text" th:field="*{name}" id="name" />
         <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error"></div>
     </div>
 
     <div class="field">
-        <label>Description</label>
-        <input type="text" th:field="*{description}" />
+        <label for="description">Description</label>
+        <input type="text" th:field="*{description}" id="description" />
         <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="error"></div>
     </div>
 
     <div class="field">
-        <label>Date</label>
-        <input type="date" th:field="*{date}" />
+        <label for="date">Date</label>
+        <input type="date" th:field="*{date}" id="date" />
         <div th:if="${#fields.hasErrors('date')}" th:errors="*{date}" class="error"></div>
     </div>
 
     <div class="field">
-        <label>Room ID</label>
-        <input type="number" th:field="*{roomId}" />
+        <label for="roomId">Room ID</label>
+        <input type="number" th:field="*{roomId}" id="roomId" />
         <div th:if="${#fields.hasErrors('roomId')}" th:errors="*{roomId}" class="error"></div>
     </div>
 
     <div class="field">
-        <label>Max Participants</label>
-        <input type="number" th:field="*{maxParticipants}" />
+        <label for="maxParticipants">Max Participants</label>
+        <input type="number" th:field="*{maxParticipants}" id="maxParticipants" />
         <div th:if="${#fields.hasErrors('maxParticipants')}" th:errors="*{maxParticipants}" class="error"></div>
     </div>
 

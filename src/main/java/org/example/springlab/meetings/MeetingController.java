@@ -42,6 +42,9 @@ public class MeetingController {
     @GetMapping("/meetings/update/{id}")
     public String showUpdateMeetingForm(@PathVariable Long id, Model model) {
         Meeting meeting = meetingService.getMeetingById(id);
+        if (meeting == null) {
+            return "redirect:/meetings";
+        }
 
         UpdateMeetingDTO dto = new UpdateMeetingDTO(
                 meeting.getId(),
@@ -89,6 +92,9 @@ public class MeetingController {
         }
 
         Meeting meeting = meetingService.getMeetingById(dto.id());
+        if (meeting == null) {
+            return "redirect:/meetings";
+        }
         MeetingMapper.updateMeeting(meeting, dto);
         meetingService.saveMeeting(meeting);
         return "redirect:/meetings";
