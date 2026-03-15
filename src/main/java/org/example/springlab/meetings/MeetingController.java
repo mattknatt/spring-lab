@@ -3,12 +3,18 @@ package org.example.springlab.meetings;
 import jakarta.validation.Valid;
 import org.example.springlab.meetings.dto.CreateMeetingDTO;
 import org.example.springlab.meetings.dto.UpdateMeetingDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.time.LocalDate;
+
 
 @Controller
 public class MeetingController {
@@ -19,12 +25,42 @@ public class MeetingController {
         this.meetingService = meetingService;
     }
 
-    // --- LIST ---
+    // --- LIST (with filtering + pagination) ---
     @GetMapping("/meetings")
-    public String viewMeetings(Model model) {
-        List<Meeting> meetings = meetingService.getAllMeetings();
-        model.addAttribute("meetings", meetings);
-        model.addAttribute("title", "Meetings");
+    public String viewMeetings(
+            Model model,
+            @RequestParam(defaultValue = "0")  int page,
+            @RequestParam(defaultValue = "3") int size,
+            @RequestParam(required = false)    String name,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo,
+            @RequestParam(required = false)    Long room
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("date").ascending());
+        Page<Meeting> meetingPage = meetingService.getMeetings(pageable, name, dateFrom, dateTo, room);
+
+        boolean isFiltered = (name != null && !name.isBlank())
+                || dateFrom != null
+                || dateTo   != null
+                || room != null;
+
+        model.addAttribute("meetings",        meetingPage.getContent());
+        model.addAttribute("currentPage",     meetingPage.getNumber());
+        model.addAttribute("totalPages",      meetingPage.getTotalPages());
+        model.addAttribute("totalElements",   meetingPage.getTotalElements());
+        model.addAttribute("size",            size);
+        model.addAttribute("isFiltered",      isFiltered);
+
+        // Echo filter values back so inputs stay populated after submit
+        model.addAttribute("filterName",     name);
+        model.addAttribute("filterDateFrom", dateFrom);
+        model.addAttribute("filterDateTo",   dateTo);
+        model.addAttribute("filterRoom",     room);
+
+        // Populate room dropdown with all distinct room IDs
+        model.addAttribute("allRooms", meetingService.getAllRoomIds());
+
+        model.addAttribute("title",   "Meetings");
         model.addAttribute("message", "All meetings");
         return "meetings";
     }
@@ -67,13 +103,11 @@ public class MeetingController {
     public String createMeeting(@Valid @ModelAttribute("meeting") CreateMeetingDTO dto,
                                 BindingResult bindingResult,
                                 Model model) {
-
         if (bindingResult.hasErrors()) {
             model.addAttribute("title", "Create meeting");
             model.addAttribute("formAction", "/meetings");
             return "meeting-form";
         }
-
         Meeting meeting = MeetingMapper.fromDTO(dto);
         meetingService.saveMeeting(meeting);
         return "redirect:/meetings";
@@ -84,13 +118,11 @@ public class MeetingController {
     public String updateMeeting(@Valid @ModelAttribute("meeting") UpdateMeetingDTO dto,
                                 BindingResult bindingResult,
                                 Model model) {
-
         if (bindingResult.hasErrors()) {
             model.addAttribute("title", "Update meeting");
             model.addAttribute("formAction", "/meetings/update");
             return "meeting-form";
         }
-
         Meeting meeting = meetingService.getMeetingById(dto.id());
         if (meeting == null) {
             return "redirect:/meetings";

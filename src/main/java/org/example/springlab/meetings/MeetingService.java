@@ -1,5 +1,7 @@
 package org.example.springlab.meetings;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -7,14 +9,16 @@ import java.util.List;
 
 @Service
 public class MeetingService {
+
     private final MeetingRepository meetingRepository;
 
     public MeetingService(MeetingRepository meetingRepository) {
         this.meetingRepository = meetingRepository;
     }
 
-    public List<Meeting> getAllMeetings() {
-        return meetingRepository.findAll();
+
+    public Meeting getMeetingById(Long id) {
+        return meetingRepository.findById(id).orElse(null);
     }
 
     public Meeting saveMeeting(Meeting meeting) {
@@ -25,18 +29,17 @@ public class MeetingService {
         meetingRepository.deleteById(id);
     }
 
-    public List<Meeting> getMeetingsByDate(LocalDate date) {
-       return meetingRepository.findByDate(date);
+    public Page<Meeting> getMeetings(Pageable pageable,
+                                     String name,
+                                     LocalDate dateFrom,
+                                     LocalDate dateTo,
+                                     Long room) {
+        // Normalise blank strings to null so JPQL :param IS NULL checks work
+        String normName = (name != null && name.isBlank()) ? null : name;
+        return meetingRepository.findAllFiltered(normName, dateFrom, dateTo, room, pageable);
     }
 
-    public List<Meeting> getMeetingsByRoomId(Long roomId) {
-        return meetingRepository.findByRoomId(roomId);
-    }
-
-    public List<Meeting> getMeetingsByDateAndRoomId(LocalDate date, Long roomId) {
-        return meetingRepository.findByDateAndRoomId(date, roomId);
-    }
-    public Meeting getMeetingById(Long id) {
-        return meetingRepository.findById(id).orElse(null);
+    public List<String> getAllRoomIds() {
+        return meetingRepository.findAllDistinctRoomIds();
     }
 }

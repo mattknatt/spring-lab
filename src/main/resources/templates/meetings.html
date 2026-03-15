@@ -4,12 +4,7 @@
     <meta charset="UTF-8">
     <title th:text="${title}">Meetings</title>
     <style>
-        body {
-            font-family: sans-serif;
-            padding: 32px;
-            font-size: 14px;
-            color: #222;
-        }
+        body { font-family: sans-serif; padding: 32px; font-size: 14px; color: #222; }
 
         .header {
             display: flex;
@@ -20,7 +15,6 @@
 
         h1 { font-size: 20px; font-weight: 600; }
 
-        /* Filter bar */
         .filters {
             display: flex;
             gap: 12px;
@@ -29,11 +23,7 @@
             align-items: flex-end;
         }
 
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
+        .filter-group { display: flex; flex-direction: column; gap: 4px; }
 
         .filter-group label {
             font-size: 11px;
@@ -58,92 +48,61 @@
         }
 
         .filter-group input:focus,
-        .filter-group select:focus {
-            border-color: #aaa;
-        }
+        .filter-group select:focus { border-color: #aaa; }
 
-        .filter-group input[type="date"] {
-            width: 138px;
-        }
+        .filter-group input[type="date"] { width: 138px; }
+        .filter-group input[type="text"] { width: 200px; }
+        .filter-group select             { width: 140px; }
+        .filter-sep { font-size: 12px; color: #bbb; padding-bottom: 7px; }
 
-        .filter-group input[type="text"] {
-            width: 200px;
-        }
+        .filter-actions { display: flex; gap: 8px; align-items: flex-end; }
 
-        .filter-group select {
-            width: 140px;
+        .btn-apply {
+            font-size: 13px; font-family: sans-serif;
+            background: #222; color: #fff;
+            border: none; border-radius: 6px;
+            padding: 0 14px; height: 32px; cursor: pointer;
         }
+        .btn-apply:hover { background: #444; }
 
-        .filter-sep {
-            font-size: 12px;
-            color: #bbb;
-            padding-bottom: 7px;
+        .btn-clear {
+            font-size: 13px; font-family: sans-serif;
+            background: none; color: #aaa;
+            border: 1px solid #ddd; border-radius: 6px;
+            padding: 0 14px; height: 32px; cursor: pointer;
+            text-decoration: none; display: inline-flex; align-items: center;
         }
+        .btn-clear:hover { color: #555; border-color: #aaa; }
 
-        .clear-btn {
-            font-size: 12px;
-            color: #aaa;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0 0 7px 0;
-            font-family: sans-serif;
-            text-decoration: underline;
-            align-self: flex-end;
-        }
+        .results-meta { font-size: 12px; color: #aaa; margin-bottom: 12px; min-height: 16px; }
 
-        .clear-btn:hover { color: #555; }
+        table { width: 100%; border-collapse: collapse; }
 
-        /* Results count */
-        .results-meta {
-            font-size: 12px;
-            color: #aaa;
-            margin-bottom: 12px;
-            min-height: 16px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            text-align: left;
-            padding: 10px 12px;
-            border-bottom: 1px solid #e5e5e5;
-        }
-
-        th {
-            font-size: 12px;
-            color: #888;
-            font-weight: 600;
-        }
+        th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #e5e5e5; }
+        th { font-size: 12px; color: #888; font-weight: 600; }
 
         .actions { display: flex; gap: 8px; }
-
         a { color: #222; font-size: 13px; }
 
         button {
-            font-size: 13px;
-            background: none;
-            border: none;
-            color: #888;
-            cursor: pointer;
-            padding: 0;
-            font-family: sans-serif;
+            font-size: 13px; background: none; border: none;
+            color: #888; cursor: pointer; padding: 0; font-family: sans-serif;
         }
-
         button:hover { color: #c0392b; }
 
         .empty { color: #aaa; margin-top: 16px; }
 
-        tr.hidden-row { display: none; }
+        .pagination { display: flex; align-items: center; gap: 4px; margin-top: 24px; }
 
-        .no-results {
-            color: #aaa;
-            margin-top: 16px;
-            display: none;
+        .pagination a, .pagination span {
+            display: inline-flex; align-items: center; justify-content: center;
+            min-width: 32px; height: 32px; padding: 0 8px;
+            border-radius: 6px; font-size: 13px; color: #222;
+            text-decoration: none; border: 1px solid transparent;
         }
+        .pagination a:hover  { border-color: #ddd; background: #f5f5f5; }
+        .pagination .active  { border-color: #222; font-weight: 600; }
+        .pagination .disabled { color: #ccc; pointer-events: none; }
     </style>
 </head>
 <body>
@@ -153,36 +112,55 @@
     <a th:href="@{/meetings/new}">+ New meeting</a>
 </div>
 
-<!-- Filter bar (only shown when there are meetings) -->
-<div class="filters" th:if="${not #lists.isEmpty(meetings)}">
-    <div class="filter-group">
-        <label for="filter-name">Name</label>
-        <input type="text" id="filter-name" placeholder="Search by name…">
-    </div>
+<form method="get" th:action="@{/meetings}">
+    <input type="hidden" name="page" value="0"/>
+    <input type="hidden" name="size" th:value="${size}"/>
 
-    <div class="filter-group">
-        <label>Date range</label>
-        <div style="display:flex;align-items:center;gap:6px;">
-            <input type="date" id="filter-date-from">
-            <span class="filter-sep">–</span>
-            <input type="date" id="filter-date-to">
+    <div class="filters">
+        <div class="filter-group">
+            <label for="filter-name">Name</label>
+            <input type="text" id="filter-name" name="name"
+                   th:value="${filterName}" placeholder="Search by name…">
+        </div>
+
+        <div class="filter-group">
+            <label>Date range</label>
+            <div style="display:flex;align-items:center;gap:6px;">
+                <input type="date" name="dateFrom" th:value="${filterDateFrom}">
+                <span class="filter-sep">–</span>
+                <input type="date" name="dateTo" th:value="${filterDateTo}">
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <label for="filter-room">Room</label>
+            <select id="filter-room" name="room">
+                <option value="" th:selected="${filterRoom == null}">All rooms</option>
+                <option th:each="room : ${allRooms}"
+                        th:value="${room}"
+                        th:text="${room}"
+                        th:selected="${room == filterRoom}">
+                </option>
+            </select>
+        </div>
+
+        <div class="filter-actions">
+            <button type="submit" class="btn-apply">Apply</button>
+            <a th:href="@{/meetings(size=${size})}" class="btn-clear">Clear</a>
         </div>
     </div>
+</form>
 
-    <div class="filter-group">
-        <label for="filter-room">Room</label>
-        <select id="filter-room">
-            <option value="">All rooms</option>
-            <!-- Populated dynamically from table rows -->
-        </select>
-    </div>
-
-    <button class="clear-btn" id="clear-filters">Clear filters</button>
+<div class="results-meta" th:if="${totalElements > 0}">
+    <span th:if="${isFiltered}"
+          th:text="${totalElements + (totalElements != 1 ? ' meetings' : ' meeting') + ' matching your filters'}">
+    </span>
+    <span th:unless="${isFiltered}"
+          th:text="${totalElements + (totalElements != 1 ? ' meetings' : ' meeting')}">
+    </span>
 </div>
 
-<div class="results-meta" id="results-meta" th:if="${not #lists.isEmpty(meetings)}"></div>
-
-<table th:if="${not #lists.isEmpty(meetings)}" id="meetings-table">
+<table th:if="${not #lists.isEmpty(meetings)}">
     <thead>
     <tr>
         <th>Name</th>
@@ -193,11 +171,8 @@
         <th></th>
     </tr>
     </thead>
-    <tbody id="meetings-body">
-    <tr th:each="meeting : ${meetings}"
-        th:data-name="${meeting.name}"
-        th:data-date="${meeting.date}"
-        th:data-room="${meeting.roomId}">
+    <tbody>
+    <tr th:each="meeting : ${meetings}">
         <td th:text="${meeting.name}"></td>
         <td th:text="${meeting.description}"></td>
         <td th:text="${#temporals.format(meeting.date, 'dd MMM yyyy')}"></td>
@@ -207,9 +182,7 @@
             <div class="actions">
                 <a th:href="@{/meetings/update/{id}(id=${meeting.id})}">Edit</a>
                 <form th:action="@{/meetings/delete/{id}(id=${meeting.id})}" method="post">
-                    <button type="submit" onclick="return confirm('Delete this meeting?')">
-                        Delete
-                    </button>
+                    <button type="submit" onclick="return confirm('Delete this meeting?')">Delete</button>
                 </form>
             </div>
         </td>
@@ -217,76 +190,27 @@
     </tbody>
 </table>
 
-<p class="no-results" id="no-results">No meetings match your filters.</p>
-<p class="empty" th:if="${#lists.isEmpty(meetings)}">No meetings scheduled.</p>
+<p class="empty" th:if="${#lists.isEmpty(meetings)}">
+    <span th:if="${isFiltered}">No meetings match your filters.</span>
+    <span th:unless="${isFiltered}">No meetings scheduled.</span>
+</p>
 
-<script th:if="${not #lists.isEmpty(meetings)}">
-    const nameInput   = document.getElementById('filter-name');
-    const dateFrom    = document.getElementById('filter-date-from');
-    const dateTo      = document.getElementById('filter-date-to');
-    const roomSelect  = document.getElementById('filter-room');
-    const clearBtn    = document.getElementById('clear-filters');
-    const meta        = document.getElementById('results-meta');
-    const noResults   = document.getElementById('no-results');
-    const tbody       = document.getElementById('meetings-body');
-    const allRows     = Array.from(tbody.querySelectorAll('tr'));
+<div class="pagination" th:if="${totalPages > 1}">
+    <a th:if="${currentPage > 0}"
+       th:href="@{/meetings(page=${currentPage - 1}, size=${size}, name=${filterName}, dateFrom=${filterDateFrom}, dateTo=${filterDateTo}, room=${filterRoom})}">←</a>
+    <span th:unless="${currentPage > 0}" class="disabled">←</span>
 
-    // Populate room dropdown from unique room values in the table
-    const rooms = [...new Set(allRows.map(r => r.dataset.room).filter(Boolean))].sort();
-    rooms.forEach(room => {
-        const opt = document.createElement('option');
-        opt.value = room;
-        opt.textContent = room;
-        roomSelect.appendChild(opt);
-    });
+    <th:block th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+        <span th:if="${i == currentPage}" class="active" th:text="${i + 1}"></span>
+        <a th:unless="${i == currentPage}"
+           th:href="@{/meetings(page=${i}, size=${size}, name=${filterName}, dateFrom=${filterDateFrom}, dateTo=${filterDateTo}, room=${filterRoom})}"
+           th:text="${i + 1}"></a>
+    </th:block>
 
-    function applyFilters() {
-        const name     = nameInput.value.trim().toLowerCase();
-        const from     = dateFrom.value;   // "YYYY-MM-DD" or ""
-        const to       = dateTo.value;
-        const room     = roomSelect.value;
-
-        let visible = 0;
-
-        allRows.forEach(row => {
-            const rowName = (row.dataset.name || '').toLowerCase();
-            const rowDate = (row.dataset.date || '').slice(0, 10); // "YYYY-MM-DD"
-            const rowRoom = row.dataset.room || '';
-
-            const matchName = !name || rowName.includes(name);
-            const matchFrom = !from || rowDate >= from;
-            const matchTo   = !to   || rowDate <= to;
-            const matchRoom = !room || rowRoom === room;
-
-            const show = matchName && matchFrom && matchTo && matchRoom;
-            row.classList.toggle('hidden-row', !show);
-            if (show) visible++;
-        });
-
-        const total = allRows.length;
-        const filtered = visible < total;
-        meta.textContent = filtered
-            ? `Showing ${visible} of ${total} meeting${total !== 1 ? 's' : ''}`
-            : '';
-        noResults.style.display = visible === 0 ? 'block' : 'none';
-    }
-
-    nameInput.addEventListener('input', applyFilters);
-    dateFrom.addEventListener('change', applyFilters);
-    dateTo.addEventListener('change', applyFilters);
-    roomSelect.addEventListener('change', applyFilters);
-
-    clearBtn.addEventListener('click', () => {
-        nameInput.value = '';
-        dateFrom.value  = '';
-        dateTo.value    = '';
-        roomSelect.value = '';
-        applyFilters();
-    });
-
-    // Initial state
-    applyFilters();
-</script>
+    <a th:if="${currentPage < totalPages - 1}"
+       th:href="@{/meetings(page=${currentPage + 1}, size=${size}, name=${filterName}, dateFrom=${filterDateFrom}, dateTo=${filterDateTo}, room=${filterRoom})}">→</a>
+    <span th:unless="${currentPage < totalPages - 1}" class="disabled">→</span>
+</div>
 
 </body>
 </html>
