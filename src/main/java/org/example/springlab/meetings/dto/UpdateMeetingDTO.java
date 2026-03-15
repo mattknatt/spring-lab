@@ -9,7 +9,7 @@ public record UpdateMeetingDTO(
         @NotBlank String name,
         @NotBlank @Size(min = 3, max = 255) String description,
         @NotNull @FutureOrPresent LocalDate date,
-        @NotNull Long roomId,
+        @NotNull @Positive Long roomId,
         @Positive @Max(100) Integer maxParticipants
 ) {
 }

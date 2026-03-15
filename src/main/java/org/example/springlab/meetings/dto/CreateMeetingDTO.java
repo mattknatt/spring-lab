@@ -8,7 +8,7 @@ public record CreateMeetingDTO(
         @NotBlank String name,
         @Size(min = 3, max = 255) @NotBlank String description,
         @NotNull @FutureOrPresent LocalDate date,
-        @NotNull Long roomId,
+        @NotNull @Positive Long roomId,
         @Positive @Max(100) Integer maxParticipants
 ) {
 }
