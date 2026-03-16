@@ -9,6 +9,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,7 +29,7 @@ public class MeetingController {
         this.meetingService = meetingService;
     }
 
-    // --- LIST (with filtering + pagination) ---
+    //LIST (with filtering + pagination)
     @GetMapping("/meetings")
     public String viewMeetings(
             Model model,
@@ -71,7 +73,6 @@ public class MeetingController {
         return "meetings";
     }
 
-    // --- CREATE FORM ---
     @GetMapping("/meetings/new")
     public String showCreateMeetingForm(Model model) {
         model.addAttribute("meeting", new CreateMeetingDTO("", "", null, null, null));
@@ -80,13 +81,9 @@ public class MeetingController {
         return "meeting-form";
     }
 
-    // --- EDIT FORM ---
     @GetMapping("/meetings/update/{id}")
     public String showUpdateMeetingForm(@PathVariable Long id, Model model) {
         Meeting meeting = meetingService.getMeetingById(id);
-        if (meeting == null) {
-            return "redirect:/meetings";
-        }
 
         UpdateMeetingDTO dto = new UpdateMeetingDTO(
                 meeting.getId(),
@@ -104,7 +101,6 @@ public class MeetingController {
         return "meeting-form";
     }
 
-    // --- SAVE CREATE ---
     @PostMapping("/meetings")
     public String createMeeting(@Valid @ModelAttribute("meeting") CreateMeetingDTO dto,
                                 BindingResult bindingResult,
@@ -119,7 +115,6 @@ public class MeetingController {
         return "redirect:/meetings";
     }
 
-    // --- SAVE UPDATE ---
     @PostMapping("/meetings/update")
     public String updateMeeting(@Valid @ModelAttribute("meeting") UpdateMeetingDTO dto,
                                 BindingResult bindingResult,
@@ -130,18 +125,22 @@ public class MeetingController {
             return "meeting-form";
         }
         Meeting meeting = meetingService.getMeetingById(dto.id());
-        if (meeting == null) {
-            return "redirect:/meetings";
-        }
         MeetingMapper.updateMeeting(meeting, dto);
         meetingService.saveMeeting(meeting);
         return "redirect:/meetings";
     }
 
-    // --- DELETE ---
     @PostMapping("/meetings/delete/{id}")
     public String deleteMeeting(@PathVariable Long id) {
         meetingService.deleteMeeting(id);
         return "redirect:/meetings";
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String handleResourceNotFound(ResourceNotFoundException ex, Model model) {
+        model.addAttribute("message", ex.getMessage());
+        model.addAttribute("title", "Not found");
+        return "error";
     }
 }

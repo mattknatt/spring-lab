@@ -18,7 +18,7 @@ public class MeetingService {
 
 
     public Meeting getMeetingById(Long id) {
-        return meetingRepository.findById(id).orElse(null);
+        return meetingRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Meeting not found: " + id));
     }
 
     public Meeting saveMeeting(Meeting meeting) {
