@@ -1,5 +1,6 @@
 package org.example.springlab.meetings;
 
+import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import org.example.springlab.meetings.dto.CreateMeetingDTO;
 import org.example.springlab.meetings.dto.MeetingDTO;
@@ -10,14 +11,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
 
 
 @Controller
