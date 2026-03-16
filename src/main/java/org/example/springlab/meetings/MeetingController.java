@@ -141,6 +141,6 @@ public class MeetingController {
     public String handleResourceNotFound(ResourceNotFoundException ex, Model model) {
         model.addAttribute("message", ex.getMessage());
         model.addAttribute("title", "Not found");
-        return "error";
+        return "error/404";
     }
 }
