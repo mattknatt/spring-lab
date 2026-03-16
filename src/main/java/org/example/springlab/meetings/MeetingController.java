@@ -2,6 +2,7 @@ package org.example.springlab.meetings;
 
 import jakarta.validation.Valid;
 import org.example.springlab.meetings.dto.CreateMeetingDTO;
+import org.example.springlab.meetings.dto.MeetingDTO;
 import org.example.springlab.meetings.dto.UpdateMeetingDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 
 @Controller
@@ -41,16 +43,17 @@ public class MeetingController {
 
         Pageable pageable = PageRequest.of(safePage, safeSize, Sort.by("date").ascending());
         Page<Meeting> meetingPage = meetingService.getMeetings(pageable, name, dateFrom, dateTo, room);
+        Page<MeetingDTO> meetingDto = meetingPage.map(MeetingMapper::toDTO);
 
         boolean isFiltered = (name != null && !name.isBlank())
                 || dateFrom != null
                 || dateTo   != null
                 || room != null;
 
-        model.addAttribute("meetings",        meetingPage.getContent());
-        model.addAttribute("currentPage",     meetingPage.getNumber());
-        model.addAttribute("totalPages",      meetingPage.getTotalPages());
-        model.addAttribute("totalElements",   meetingPage.getTotalElements());
+        model.addAttribute("meetings",        meetingDto.getContent());
+        model.addAttribute("currentPage",     meetingDto.getNumber());
+        model.addAttribute("totalPages",      meetingDto.getTotalPages());
+        model.addAttribute("totalElements",   meetingDto.getTotalElements());
         model.addAttribute("size",            safeSize);
         model.addAttribute("isFiltered",      isFiltered);
 
