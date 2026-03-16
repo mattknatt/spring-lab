@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${title}">Error</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 32px;
+      font-size: 14px;
+      color: #222;
+    }
+
+    .error-container {
+      max-width: 500px;
+      margin: 64px auto;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 48px;
+      font-weight: 600;
+      color: #c0392b;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #222;
+      margin-bottom: 12px;
+    }
+
+    p {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+
+    a {
+      display: inline-block;
+      background: #222;
+      color: #fff;
+      padding: 9px 18px;
+      font-size: 13px;
+      text-decoration: none;
+      border-radius: 6px;
+    }
+
+    a:hover {
+      background: #444;
+    }
+  </style>
+</head>
+<body>
+
+<div class="error-container">
+  <h1>404</h1>
+  <h2 th:text="${title}">Not found</h2>
+  <p th:text="${message}">The resource you're looking for could not be found.</p>
+  <a th:href="@{/meetings}">← Back to meetings</a>
+</div>
+
+</body>
+</html>
