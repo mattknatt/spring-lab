@@ -38,7 +38,7 @@ class MeetingServiceTest {
         Meeting meeting = new Meeting(1L,
                 "meeting",
                 "description",
-                LocalDate.now(),
+                LocalDate.of(2026,1,1),
                 12L,
                 3);
 
@@ -50,7 +50,7 @@ class MeetingServiceTest {
         assertThat(expected.getId()).isEqualTo(1L);
         assertThat(expected.getName()).isEqualTo("meeting");
         assertThat(expected.getDescription()).isEqualTo("description");
-        assertThat(expected.getDate()).isEqualTo(LocalDate.now());
+        assertThat(expected.getDate()).isEqualTo(LocalDate.of(2026, 1, 1));
         assertThat(expected.getRoomId()).isEqualTo(12L);
         assertThat(expected.getMaxParticipants()).isEqualTo(3);
 
