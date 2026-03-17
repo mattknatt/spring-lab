@@ -30,16 +30,27 @@ class MeetingControllerTest {
         when(meetingService.getMeetings(any(), any(), any(), any(), any()))
                 .thenReturn(Page.empty());
 
-        when(meetingService.getAllRoomIds()).thenReturn(List.of(1L,2L,3L));
+        List<Long> rooms = List.of(1L,2L);
+        when(meetingService.getAllRoomIds()).thenReturn(rooms);
 
         mockMvc.perform(get("/meetings"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("meetings"))
                 .andExpect(model().attributeExists("meetings"))
-                .andExpect(model().attributeExists("allRooms"))
+                .andExpect(model().attribute("allRooms", rooms))
                 .andExpect(model().attributeExists("currentPage"))
                 .andExpect(model().attributeExists("totalPages"));
         
+    }
+
+    @Test
+    void showCreateMeetingForm_shouldReturnForm() throws Exception {
+
+        mockMvc.perform(get("/meetings/new"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("meeting-form"))
+                .andExpect(model().attributeExists("meeting"))
+                .andExpect(model().attribute("formAction", "/meetings"));
     }
 
 }
