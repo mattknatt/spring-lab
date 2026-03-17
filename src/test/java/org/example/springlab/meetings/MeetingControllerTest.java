@@ -35,7 +35,7 @@ class MeetingControllerTest {
         when(meetingService.getMeetings(any(), any(), any(), any(), any()))
                 .thenReturn(Page.empty());
 
-        List<Long> rooms = List.of(1L,2L);
+        List<Long> rooms = List.of(1L, 2L);
         when(meetingService.getAllRoomIds()).thenReturn(rooms);
 
         mockMvc.perform(get("/meetings"))
@@ -45,7 +45,7 @@ class MeetingControllerTest {
                 .andExpect(model().attribute("allRooms", rooms))
                 .andExpect(model().attributeExists("currentPage"))
                 .andExpect(model().attributeExists("totalPages"));
-        
+
     }
 
     @Test
@@ -124,26 +124,27 @@ class MeetingControllerTest {
         assertThat(saved.getMaxParticipants()).isEqualTo(5);
     }
 
-    
+
     @Test
     void createMeeting_invalidInput_returnsForm() throws Exception {
         mockMvc.perform(post("/meetings")
-                .param("name", "")
-                .param("description", "")
-                .param("date", "")
-                .param("roomId", "")
-                .param("maxParticipants", ""))
+                        .param("name", "")
+                        .param("description", "")
+                        .param("date", "")
+                        .param("roomId", "")
+                        .param("maxParticipants", ""))
                 .andExpect(status().isOk())
                 .andExpect(view().name("meeting-form"))
                 .andExpect(model().attributeExists("title"))
                 .andExpect(model().attributeExists("formAction"));
 
-                verify(meetingService, never()).saveMeeting(any());
-        
+        verify(meetingService, never()).saveMeeting(any());
+
     }
 
     @Test
     void updateMeeting_validInput_shouldUpdateAndRedirect() throws Exception {
+        LocalDate expectedDate = LocalDate.now().plusDays(1);
 
         Meeting existingMeeting = new Meeting(
                 1L,
@@ -160,7 +161,7 @@ class MeetingControllerTest {
                         .param("id", "1")
                         .param("name", "Updated")
                         .param("description", "Updated desc")
-                        .param("date", "2026-05-10")
+                        .param("date", expectedDate.toString())
                         .param("roomId", "12")
                         .param("maxParticipants", "5"))
                 .andExpect(status().is3xxRedirection())
@@ -168,6 +169,11 @@ class MeetingControllerTest {
 
         verify(meetingService).getMeetingById(1L);
         verify(meetingService).saveMeeting(existingMeeting);
+        assertThat(existingMeeting.getName()).isEqualTo("Updated");
+        assertThat(existingMeeting.getDescription()).isEqualTo("Updated desc");
+        assertThat(existingMeeting.getDate()).isEqualTo(expectedDate);
+        assertThat(existingMeeting.getRoomId()).isEqualTo(12L);
+        assertThat(existingMeeting.getMaxParticipants()).isEqualTo(5);
     }
 
     @Test
