@@ -64,11 +64,13 @@ class MeetingMapperTest {
                 1
         );
 
+        Long originalId = meeting.getId();
+
         UpdateMeetingDTO dto = new UpdateMeetingDTO(
-                meeting.getId(),
+                123L,
                 "new name",
                 "new description",
-                meeting.getDate(),
+                LocalDate.of(2026, 1,2),
                 2L,
                 2);
         MeetingMapper.updateMeeting(meeting, dto);
@@ -78,8 +80,8 @@ class MeetingMapperTest {
         assertThat(meeting.getDate()).isEqualTo(dto.date());
         assertThat(meeting.getRoomId()).isEqualTo(dto.roomId());
         assertThat(meeting.getMaxParticipants()).isEqualTo(dto.maxParticipants());
-        assertThat(meeting.getId()).isEqualTo(dto.id());
-
+        assertThat(meeting.getId()).isEqualTo(originalId);
+        assertThat(meeting.getId()).isNotEqualTo(dto.id());
         
     }
 }
